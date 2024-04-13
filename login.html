@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="body">
+
+        <div class="box">
+            <h2>login</h2>
+            <div class="massage">Please Login with correct credentials</div>
+            <input id="email" type="email" placeholder="Enter your email">
+            <input id="password" type="password" placeholder="Enter your password">
+
+
+            <button onclick="login()">login</button>
+            <a href="index.html">signin</a>
+        </div>
+
+    </div>
+
+</body>
+<script>
+
+    var authtoken = "";
+    function login() {
+        let email = document.getElementById("email").value;
+        let password = document.getElementById("password").value;
+        console.log(name)
+        const data = {
+            "email": `${email}`,
+            "password": `${password}`
+        };
+
+        // Options for the fetch request
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json' // Specify content type as JSON
+            },
+            body: JSON.stringify(data) // Convert data to JSON format
+        };
+
+        var statusCode = 500;
+        fetch("http://localhost:3000/api/auth/login", options)
+            .then(response => {
+                // Get the status code from the response
+                statusCode = response.status;
+
+                // Log the status code
+                console.log('HTTP Status Code:', statusCode);
+
+                // Return the response to continue processing it
+                return response;
+            })
+            .then(response => response.json()) // Process the response data
+            .then(data => {
+                // Handle the response data
+                // const res=JSON.stringify(data);
+                // console.log('Response Data:', res);
+
+                const msg = document.querySelector(".massage");
+
+                if (statusCode == 404) {
+                    msg.classList.add("show")
+                    msg.innerHTML = "Please Enter valid details"
+                    setTimeout(function () {
+                        msg.classList.remove("show")
+
+
+                    }, 3000);
+                }
+                if (statusCode == 400) {
+                    msg.classList.add("show")
+                    msg.innerHTML = "Please Login with correct credentials"
+                    console.log("Please Login with correct credentials")
+                    setTimeout(function () {
+                        msg.classList.remove("show")
+
+
+                    }, 3000);
+                }
+                if (statusCode == 500) {
+                    msg.classList.add("show")
+
+                    msg.innerHTML = "Some Internal error occured:("
+                    console.log("Some Internal error occured:(")
+                    setTimeout(function () {
+                        msg.classList.remove("show")
+
+
+                    }, 3000);
+
+                }
+                if (statusCode == 200) {
+                    console.log(data)
+
+                    const jsonData = JSON.stringify(data);
+
+                    const dataObject = JSON.parse(jsonData);
+
+                    // Access the properties of the JavaScript object
+                    const authtoken = dataObject.authtoken;
+                    const name = dataObject.name;
+
+                    // Now you can use the extracted data
+                    console.log(`Authtoken: ${authtoken}`);
+                    console.log(`Name: ${name}`);
+
+
+                    sessionStorage.setItem('token', `${authtoken}`);
+                    sessionStorage.setItem('username', `${name}`);
+
+                    document.querySelector('.body').style. backdropFilter="brightness(300)";
+                    document.querySelector('.body').style. filter="invert(3)";
+
+                    // document.querySelector('.box').style. display="none";
+
+                    console.log(" massage : " + dataObject)
+
+                    setTimeout(function () {
+                    window.location.href = "home.html"
+                    // document.querySelector('body').style. display="none";
+
+
+                    }, 2000);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+</script>
+
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+        font-family: monospace;
+
+    }
+
+    .massage {
+        font-size: 20px;
+        top: -7%;
+        padding: 10px 30px;
+        background: #181818;
+        transition: .4s;
+        position: absolute;
+        text-align: center;
+        border-radius: 50px;
+        margin-bottom: 10px;
+        color: red;
+        text-align: center;
+        margin-bottom: 10px;
+        color: red;
+    }
+
+    .show {
+        top: 6%;
+        transition: .4s;
+    }
+
+    :root {
+        --clr1: #3690db91;
+    }
+
+    a {
+        color: rgb(87, 87, 87);
+        text-decoration: none;
+        font-size: 20px;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    /* background: linear-gradient(#161616,black,black); */
+    body {
+
+        box-shadow: inset 0px -20px 100px 410px rgb(0, 0, 0);
+        animation: show 3s 1s ease forwards;
+        background: rgb(22, 22, 22);
+
+
+    }
+
+    @keyframes show {
+
+        to {
+            /* box-shadow: inset 0px 0px 0px 0px  red; */
+
+            box-shadow: inset 0px -60px 620px 90px black;
+
+        }
+    }
+
+    .body {
+        background: url("file:///C:/Users/User/Downloads/New%20Project%20(1).png");
+        background-position: center;
+        /* backdrop-filter:brightness(2); */
+        display: flex;
+        backdrop-filter:brightness(1);
+        align-items: center;
+        opacity: 1;
+        justify-content: center;
+        height: 100vh;
+        transition:  10s ease-in;
+        overflow: hidden;
+    }
+
+
+    .box {
+        display: flex;
+        box-shadow: 3px 3px 0px var(--clr1), 0px 0px 140px 10px black;
+        align-items: center;
+        background-color: rgb(30, 30, 30);
+        justify-content: center;
+        flex-direction: column;
+        width: 300px;
+
+        height: 350px;
+        padding: 40px 20px;
+        border-radius: 20px;
+    }
+
+
+
+    h2 {
+        color: blanchedalmond;
+        text-shadow: 3px 0px 0px var(--clr1);
+        text-transform: capitalize;
+
+        /* background-color: red; */
+        font-size: 46px;
+        margin-bottom: 10px;
+    }
+
+    input {
+        width: 240px;
+        color: whitesmoke;
+        font-size: 18px;
+        border-radius: 6px;
+        padding: 5px 10px;
+        height: 25px;
+        background-color: transparent;
+        border: 1px solid rgb(82, 82, 82);
+        margin-bottom: 10px;
+        outline: none;
+    }
+
+    button {
+        height: 40px;
+        margin-top: 10px;
+        width: 260px;
+        font-size: 20px;
+        border-radius: 6px;
+
+        background-color: var(--clr1);
+
+        /* box-shadow: inset -56px 0px 69px #000000a3, inset 58px 0px 36px #ffffff59; */
+
+
+
+        border: none;
+        cursor: pointer;
+        margin-bottom: 10px;
+        transition: .2s;
+        box-shadow: inset -56px 0px 69px #000000a3,
+            inset 58px 0px 36px #ffffff59,
+            2px 2px 10px rgba(0, 0, 0, 0.376);
+    }
+
+    button:hover{
+/* background-color: red; */
+        filter:brightness(2);
+    }
+
+
+    button:hover.box {
+        background-color: red;
+    }
+</style>
+
+</html>

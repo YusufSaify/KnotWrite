@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chat app</title>
+</head>
+<script src="/socket.io/socket.io.js"></script>
+
+<body>
+
+    <div class="container">
+
+        <div class="massage-container">
+
+
+        </div>
+
+        <div class="input-container">
+            <div class="div"><input placeholder="Enter your massage" class="massage" type="text"><button
+                    onclick="send()">
+                    <img src="https://img.icons8.com/fluency-systems-regular/48/paper-plane.png" alt="paper-plane"
+                        alt="">
+                </button></div>
+            <div class="div"><input placeholder="Enter room Id" class="room" type="text"> <button onclick="joinroom()">
+                    <img src="https://img.icons8.com/fluency-systems-regular/48/add-user-group-man-man.png" alt="">
+                </button></div>
+        </div>
+    </div>
+
+    <button onclick="send()">send</button>
+    </div>
+    <!-- <script src="../index.js"></script> -->
+</body>
+<style>
+    :root {
+        --light-blue: blue;
+        --dark-blue: rgb(16, 16, 135);
+
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .container {
+        /* background-color: red; */
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .massage-container {
+        background: linear-gradient(180deg, var(--light-blue), var(--dark-blue));
+        height: calc(100vh - 120px);
+        width: 56%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .other {
+        /* background: white; */
+        color: white;
+        font-size: 18px;
+        display: inline-block;
+        margin: 5px;
+        border-radius: 6px;
+        padding: 5px 10px;
+        /* width: fit-content; */
+        text-align: start;
+    }
+
+    .you {
+        /* background: white; */
+        display: inline-block;
+
+        font-size: 18px;
+        color: white;
+        margin: 5px;
+        text-align: end;
+        border-radius: 6px;
+        padding: 5px 10px;
+    }
+
+    .input-container {
+
+        /* background-color: rgb(0, 255, 89); */
+        /* height: 200px; */
+        width: 100%;
+    }
+
+    .div {
+        /* background-color: red; */
+        display: flex;
+        align-items: center;
+        padding-top: 10px;
+        justify-content: center;
+    }
+
+    .div input {
+        width: 50%;
+        height: 45px;
+        padding: 0px 20px;
+        font-size: 18px;
+        /* background-color: rgb(243, 243, 243); */
+        border-radius: 6px;
+        outline: none;
+
+        border: 1px solid rgb(188, 188, 188);
+        margin-right: 10px;
+    }
+
+    .div button {
+        width: 80px;
+        border-radius: 6px;
+        height: 45px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .div button:active {
+        transform: scale(.9);
+    }
+
+    .div button:hover {
+        transition: .2s;
+        background-color: var(--dark-blue);
+    }
+
+    .div button:hover>img {
+        filter: invert(1);
+    }
+
+    .div button img {
+        width: 30px;
+    }
+</style>
+
+</html>
+<script>
+    const socket = io();
+    const username = prompt("enter your name")
+    const input = document.querySelector(".massage");
+    const room = document.querySelector(".room");
+
+
+    function joinroom(){
+
+        var room=getroom(); 
+        socket.emit('joinRoom',{username,room})
+
+    }
+
+
+    socket.on('massage', (massage) => {
+        outputmassage(massage.text);
+    })
+
+
+    function send() {
+        socket.emit("chat-massage", input.value);
+        inputmassage(input.value);
+        input.value = "";
+    }
+
+    let container = document.querySelector(".massage-container")
+
+
+
+    function outputmassage(massage) {
+
+        let msg = document.createElement('div')
+        msg.classList.add("other")
+        msg.innerText = `${massage}`;
+        container.appendChild(msg)
+
+    }
+    function inputmassage(massage) {
+
+        let msg = document.createElement('div')
+        msg.classList.add("you")
+        msg.innerText = `${massage}`;
+        container.appendChild(msg)
+
+    }
+
+    function getroom(){
+        return room.value;
+    }
+
+
+
+
+</script>
